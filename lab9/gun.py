@@ -41,9 +41,10 @@ class Ball:
     def move(self):
         """Переместить мяч по прошествии единицы времени.
 
-        Метод описывает перемещение мяча за один кадр перерисовки. То есть, обновляет значения
-        self.x и self.y с учетом скоростей self.vx и self.vy, силы гравитации, действующей на мяч,
-        и стен по краям окна (размер окна 800х600).
+        Метод описывает перемещение мяча за один кадр перерисовки. То есть,
+        обновляет значения self.x и self.y с учетом скоростей self.vx и
+        self.vy, силы гравитации, действующей на мяч, и стен по краям окна
+         (размер окна 800х600).
         """
         self.vy -= 1
         self.x += self.vx
@@ -59,19 +60,26 @@ class Ball:
         )
 
     def hittest(self, obj):
-        """Функция проверяет сталкивалкивается ли данный обьект с целью, описываемой в обьекте obj.
+        """
+        Функция проверяет сталкивалкивается ли данный обьект с целью,
+        описываемой в обьекте obj.
 
         Args:
             obj: Обьект, с которым проверяется столкновение.
         Returns:
-            Возвращает True в случае столкновения мяча и цели. В противном случае возвращает False.
+            Возвращает True в случае столкновения мяча и цели. В противном
+            случае возвращает False.
         """
 
         if (self.x - obj.x)**2 + (self.y - obj.y)**2 < (self.r + obj.r)**2:
             return True
         return False
-    
+
     def process_collisions(self):
+        """
+        Функция проверяет, произошло ли столкновение со стенками.
+        Если произошло, умменьшает скорость в 0.75 раз
+        """
         if self.x + self.r > WIDTH and self.vx >= 0:
             self.vx *= -1
             self.vx *= 0.75
@@ -80,6 +88,7 @@ class Ball:
             self.vy *= -1
             self.vx *= 0.75
             self.vy *= 0.75
+
 
 class Gun:
     def __init__(self, screen):
@@ -102,13 +111,15 @@ class Gun:
         """Выстрел мячом.
 
         Происходит при отпускании кнопки мыши.
-        Начальные значения компонент скорости мяча vx и vy зависят от положения мыши.
+        Начальные значения компонент скорости мяча vx и vy
+        зависят от положения мыши.
         """
         global balls, bullet
         bullet += 1
         new_ball = Ball(self.screen, self.x, self.y)
         new_ball.r += 5
-        self.an = math.atan2((event.pos[1]-new_ball.y), (event.pos[0]-new_ball.x))
+        self.an = math.atan2((event.pos[1]-new_ball.y),
+                             (event.pos[0]-new_ball.x))
         new_ball.vx = self.f2_power * math.cos(self.an)
         new_ball.vy = - self.f2_power * math.sin(self.an)
         balls.append(new_ball)
@@ -132,7 +143,8 @@ class Gun:
         r = (dx**2 + dy**2)**0.5
         dx *= self.f2_power * 4 / r
         dy *= self.f2_power * 4 / r
-        pygame.draw.line(screen, self.color, (self.x, self.y), (self.x+dx, self.y+dy), 7)
+        pygame.draw.line(screen, self.color, (self.x, self.y),
+                         (self.x+dx, self.y+dy), 7)
 
     def power_up(self):
         if self.f2_on:
@@ -141,16 +153,16 @@ class Gun:
             self.color = RED
         else:
             self.color = GREY
-            
+
     def hit(self):
         self.points += 1
-        
+
     def add_pressed_key(self, key):
         self.pressed_keys.append(key)
-        
+
     def delete_pressed_key(self, key):
         self.pressed_keys.remove(key)
-    
+
     def move(self):
         for pressed_key in self.pressed_keys:
             if pressed_key == pygame.K_a:
@@ -162,6 +174,7 @@ class Gun:
             elif pressed_key == pygame.K_w:
                 self.y -= 5
 
+
 class Target:
     def __init__(self, screen):
         self.x = randint(600, 780)
@@ -169,21 +182,23 @@ class Target:
         self.vx = randint(-6, 6)
         self.vy = randint(-6, 6)
         self.r = randint(2, 50)
-        self.color = RED  
+        self.color = RED
         self.screen = screen
-    
+
     def draw(self):
         pygame.draw.circle(screen, self.color, (self.x, self.y), self.r)
-        
+
     def move(self):
         self.x += self.vx
         self.y += self.vy
         self.process_collisions()
-        
+
     def process_collisions(self):
-        if (self.x + self.r > WIDTH and self.vx > 0) or (self.x - self.r < 0 and self.vx < 0):
+        if (self.x + self.r > WIDTH and self.vx > 0) or \
+           (self.x - self.r < 0 and self.vx < 0):
             self.vx *= -1
-        if (self.y + self.r > HEIGHT and self.vy > 0) or (self.y - self.r < 0 and self.vy < 0):
+        if (self.y + self.r > HEIGHT and self.vy > 0) or \
+           (self.y - self.r < 0 and self.vy < 0):
             self.vy *= -1
 
 
@@ -231,10 +246,10 @@ while not finished:
                 gun.hit()
                 targets.remove(target)
                 targets.append(Target(screen))
-                
+
     for target in targets:
         target.move()
-        
+
     gun.move()
     gun.power_up()
 
