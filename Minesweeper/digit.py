@@ -1,6 +1,11 @@
 class Digit:
     def __init__(self, number):
         self.number = number
+        self.color = "black"
+        self.set_number(number)
+
+    def set_number(self, number):
+        self.number = number
         if number == 1:
             color = (0, 0, 255)
         elif number == 2:
