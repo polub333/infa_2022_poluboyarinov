@@ -25,26 +25,24 @@ def draw_field(screen, field):
     for cell_row in field.cells:
         for cell in cell_row:
             if cell.is_open():
+                opened += 1
                 if cell.content_type == "mine":
                     pygame.draw.rect(screen, "red", (cell.x*cell_size, cell.y*cell_size, cell_size, cell_size))
                     lose_game()
                 else:
-                    if cell.content.number == 0:
-                        pygame.draw.rect(screen, "gray", (cell.x*cell_size, cell.y*cell_size, cell_size, cell_size))
-                    else:
-                        pygame.draw.rect(screen, cell.content.color, (cell.x*cell_size, cell.y*cell_size, cell_size, cell_size), 3)
+                    pygame.draw.rect(screen, (220, 220, 220), (cell.x*cell_size, cell.y*cell_size, cell_size, cell_size))
+                    pygame.draw.rect(screen, "gray", (cell.x*cell_size, cell.y*cell_size, cell_size, cell_size), 1)
+                    if cell.content.number != 0:
                         text = font.render(str(cell.content.number), False, cell.content.color)
                         screen.blit(text, ((cell.x + 0.35)*cell_size, (cell.y + 0.1)*cell_size))
             elif cell.is_flagged():
-                opened += 1
                 pygame.draw.polygon(screen, "red", [((cell.x + 0.2)*cell_size, (cell.y + 0.5)*cell_size),
                                                     ((cell.x + 0.8)*cell_size, (cell.y + 0.2)*cell_size),
                                                     ((cell.x + 0.8)*cell_size, (cell.y + 0.8)*cell_size)])
                 pygame.draw.rect(screen, "black", (cell.x*cell_size, cell.y*cell_size, cell_size, cell_size), 3)
-
             else:
                 pygame.draw.rect(screen, "gray", (cell.x*cell_size, cell.y*cell_size, cell_size, cell_size), 1)
-    if opened == 40:
+    if opened == 16*16 - 40:
         game_end()
 
 def draw_timer(time_passed):
@@ -56,7 +54,7 @@ def game_end():
     finished = True
     old_record = 0
     time = time_passed // 1000
-    print("Time: " + time)
+    print("Time: " + str(time))
     with open("record.txt", "r") as f:
         old_record = f.read().rstrip()
     if(time < int(old_record)):
