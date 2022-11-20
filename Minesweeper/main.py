@@ -68,12 +68,15 @@ def win_game():
     finished = True
     old_record = 0
     time = time_passed // 1000
-    print("Time: " + str(time))
+    print("Time: " + str(time) + "s")
     with open("record.txt", "r") as f:
         old_record = f.read().rstrip()
     if(time < int(old_record)):
+        print("New record! Previus record was " + old_record + "s")
         with open("record.txt", "w") as f:
             f.write(str(time))
+    else:
+        print("Curent record is " + old_record + "s")
 
 def lose_game():
     """
