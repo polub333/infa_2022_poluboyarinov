@@ -66,59 +66,69 @@ class Field:
 
     def open(self, x, y):
         if self.cells[y][x].content_type == "digit" and self.cells[y][x].is_open():
-            mines_around = 0
-            if y > 0 and self.cells[y-1][x].is_flagged():
-                mines_around += 1
-            if y > 0 and x > 0 and self.cells[y-1][x-1].is_flagged():
-                mines_around += 1
-            if y > 0 and x < self.x - 1 and self.cells[y-1][x+1].is_flagged():
-                mines_around += 1
-            if y < self.y - 1 and self.cells[y+1][x].is_flagged():
-                mines_around += 1
-            if y < self.y - 1 and x > 0 and self.cells[y+1][x-1].is_flagged():
-                mines_around += 1
-            if y < self.y - 1 and x < self.x - 1 and self.cells[y+1][x+1].is_flagged():
-                mines_around += 1
-            if x > 0 and self.cells[y][x-1].is_flagged():
-                mines_around += 1
-            if x < self.x - 1 and self.cells[y][x+1].is_flagged():
-                mines_around += 1
-            if mines_around == self.cells[y][x].content.number:
-                if y > 0 and not self.cells[y-1][x].is_open() and not self.cells[y-1][x].is_flagged():
-                    self.open(x, y-1)
-                if y > 0 and x > 0 and not self.cells[y-1][x-1].is_open() and not self.cells[y-1][x-1].is_flagged():
-                    self.open(x-1, y-1)
-                if y > 0 and x < self.x - 1 and not self.cells[y-1][x+1].is_open() and not self.cells[y-1][x+1].is_flagged():
-                    self.open(x+1, y-1)
-                if y < self.y - 1 and not self.cells[y+1][x].is_open() and not self.cells[y+1][x].is_flagged():
-                    self.open(x, y+1)
-                if y < self.y - 1 and x > 0 and not self.cells[y+1][x-1].is_open() and not self.cells[y+1][x-1].is_flagged():
-                    self.open(x-1, y+1)
-                if y < self.y - 1 and x < self.x - 1 and not self.cells[y+1][x+1].is_open() and not self.cells[y+1][x+1].is_flagged():
-                    self.open(x+1, y+1)
-                if x > 0 and not self.cells[y][x-1].is_open() and not self.cells[y][x-1].is_flagged():
-                    self.open(x-1, y)
-                if x < self.x - 1 and not self.cells[y][x+1].is_open() and not self.cells[y][x+1].is_flagged():
-                    self.open(x+1, y)
-
+            if self.check_all_mines_around_are_open(x, y):
+                self.open_around_filled_cell(x, y)
         self.cells[y][x].open()
         if self.cells[y][x].content_type == "digit" and self.cells[y][x].content.number == 0:
-            if y > 0 and not self.cells[y-1][x].is_open():
+            self.open_around_empty_cell(x, y)
+
+
+    def open_around_empty_cell(self, x, y):
+        if y > 0 and not self.cells[y-1][x].is_open():
+            self.open(x, y-1)
+        if y > 0 and x > 0 and not self.cells[y-1][x-1].is_open():
+            self.open(x-1, y-1)
+        if y > 0 and x < self.x - 1 and not self.cells[y-1][x+1].is_open():
+            self.open(x+1, y-1)
+        if y < self.y - 1 and not self.cells[y+1][x].is_open():
+            self.open(x, y+1)
+        if y < self.y - 1 and x > 0 and not self.cells[y+1][x-1].is_open():
+            self.open(x-1, y+1)
+        if y < self.y - 1 and x < self.x - 1 and not self.cells[y+1][x+1].is_open():
+            self.open(x+1, y+1)
+        if x > 0 and not self.cells[y][x-1].is_open():
+            self.open(x-1, y)
+        if x < self.x - 1 and not self.cells[y][x+1].is_open():
+            self.open(x+1, y)
+
+    def check_all_mines_around_are_open(self, x, y):
+        mines_around = 0
+        if y > 0 and self.cells[y-1][x].is_flagged():
+            mines_around += 1
+        if y > 0 and x > 0 and self.cells[y-1][x-1].is_flagged():
+            mines_around += 1
+        if y > 0 and x < self.x - 1 and self.cells[y-1][x+1].is_flagged():
+            mines_around += 1
+        if y < self.y - 1 and self.cells[y+1][x].is_flagged():
+            mines_around += 1
+        if y < self.y - 1 and x > 0 and self.cells[y+1][x-1].is_flagged():
+            mines_around += 1
+        if y < self.y - 1 and x < self.x - 1 and self.cells[y+1][x+1].is_flagged():
+            mines_around += 1
+        if x > 0 and self.cells[y][x-1].is_flagged():
+            mines_around += 1
+        if x < self.x - 1 and self.cells[y][x+1].is_flagged():
+            mines_around += 1
+        return mines_around == self.cells[y][x].content.number
+    
+    def open_around_filled_cell(self, x, y):
+            if y > 0 and not self.cells[y-1][x].is_open() and not self.cells[y-1][x].is_flagged():
                 self.open(x, y-1)
-            if y > 0 and x > 0 and not self.cells[y-1][x-1].is_open():
+            if y > 0 and x > 0 and not self.cells[y-1][x-1].is_open() and not self.cells[y-1][x-1].is_flagged():
                 self.open(x-1, y-1)
-            if y > 0 and x < self.x - 1 and not self.cells[y-1][x+1].is_open():
+            if y > 0 and x < self.x - 1 and not self.cells[y-1][x+1].is_open() and not self.cells[y-1][x+1].is_flagged():
                 self.open(x+1, y-1)
-            if y < self.y - 1 and not self.cells[y+1][x].is_open():
+            if y < self.y - 1 and not self.cells[y+1][x].is_open() and not self.cells[y+1][x].is_flagged():
                 self.open(x, y+1)
-            if y < self.y - 1 and x > 0 and not self.cells[y+1][x-1].is_open():
-                self.open(x-1, y+1)
-            if y < self.y - 1 and x < self.x - 1 and not self.cells[y+1][x+1].is_open():
+            if y < self.y - 1 and x > 0 and not self.cells[y+1][x-1].is_open() and not self.cells[y+1][x-1].is_flagged():
+                    self.open(x-1, y+1)
+            if y < self.y - 1 and x < self.x - 1 and not self.cells[y+1][x+1].is_open() and not self.cells[y+1][x+1].is_flagged():
                 self.open(x+1, y+1)
-            if x > 0 and not self.cells[y][x-1].is_open():
+            if x > 0 and not self.cells[y][x-1].is_open() and not self.cells[y][x-1].is_flagged():
                 self.open(x-1, y)
-            if x < self.x - 1 and not self.cells[y][x+1].is_open():
+            if x < self.x - 1 and not self.cells[y][x+1].is_open() and not self.cells[y][x+1].is_flagged():
                 self.open(x+1, y)
+            
 
     def place_flag(self, x, y):
         self.cells[y][x].place_flag()
