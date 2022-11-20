@@ -11,7 +11,10 @@ screen = pygame.display.set_mode((WIDTH, HEIGHT))
 clock = pygame.time.Clock()
 
 finished = False
-field = field.Field(16, 16, 40)
+FIELD_WIDTH = 16
+FIELD_HEIGHT = 16
+MINES_NUMBER = 40
+field = field.Field(FIELD_WIDTH, FIELD_HEIGHT, MINES_NUMBER)
 cell_size = 35
 
 pygame.font.init()
@@ -42,14 +45,14 @@ def draw_field(screen, field):
                 pygame.draw.rect(screen, "black", (cell.x*cell_size, cell.y*cell_size, cell_size, cell_size), 3)
             else:
                 pygame.draw.rect(screen, "gray", (cell.x*cell_size, cell.y*cell_size, cell_size, cell_size), 1)
-    if opened == 16*16 - 40:
-        game_end()
+    if opened == FIELD_WIDTH*FIELD_HEIGHT - MINES_NUMBER:
+        win_game()
 
 def draw_timer(time_passed):
     text = info_font.render("Time: " + str(time_passed//1000), False, "black")
     screen.blit(text, (WIDTH - 120, 20))
 
-def game_end():
+def win_game():
     global finished
     finished = True
     old_record = 0
